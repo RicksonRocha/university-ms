@@ -1,7 +1,6 @@
 package com.example.university.model;
 
 import java.io.File;
-
 import com.example.university.dto.SupportMaterialRequestDTO;
 
 import jakarta.persistence.Entity;
@@ -25,22 +24,20 @@ public class SupportMaterial {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    private String link;
+    private String autor;
     private File document;
     private String type;
 
-    public SupportMaterial(String name,
-            String link,
-            File document, String type) {
+    public SupportMaterial(String name, String autor, File document, String type) {
         this.name = name;
-        this.link = link;
+        this.autor = autor;
         this.document = document;
         this.type = type;
     }
 
     public SupportMaterial(SupportMaterialRequestDTO data) {
         this.name = data.name();
-        this.link = data.link();
+        this.autor = data.autor();
         this.document = data.document();
         this.type = data.type();
     }

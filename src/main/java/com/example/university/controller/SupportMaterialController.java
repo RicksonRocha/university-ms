@@ -53,7 +53,7 @@ public class SupportMaterialController {
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping
     public ResponseEntity<SupportMaterialResponseDTO> saveSupportMaterial(@RequestBody SupportMaterialRequestDTO data) {
-        SupportMaterial supportMaterialData = new SupportMaterial(data);
+        SupportMaterial supportMaterialData = new SupportMaterial(data.name(), data.autor(), data.document(), data.type());
         supportMaterialData = supportMaterialRepository.save(supportMaterialData);
         SupportMaterialResponseDTO responseDTO = new SupportMaterialResponseDTO(supportMaterialData);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
@@ -69,8 +69,8 @@ public class SupportMaterialController {
             SupportMaterial supportMaterial = existingSupportMaterial.get();
 
             supportMaterial.setName(data.name());
+            supportMaterial.setAutor(data.autor());
             supportMaterial.setDocument(data.document());
-            supportMaterial.setLink(data.link());
             supportMaterial.setType(data.type());
 
             supportMaterialRepository.save(supportMaterial);
