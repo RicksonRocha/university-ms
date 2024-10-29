@@ -30,14 +30,18 @@ public class Tcc {
     private String orientador; // Novo campo para o orientador
 
     @ElementCollection
-    private List<String> integrantes; // Lista de integrantes da equipe
+    private List<String> integrantes; // Lista de integrantes da equipe, vai ser uma tabela auxiliar no banco
 
-    public Tcc(String name, String description, Boolean isActive, String orientador, List<String> integrantes) {
+    @ElementCollection
+    private List<String> temas; // Lista de temas para o TCC, armazenada como uma tabela auxiliar
+
+    public Tcc(String name, String description, Boolean isActive, String orientador, List<String> integrantes, List<String> temas) {
         this.name = name;
         this.description = description;
         this.isActive = isActive;
         this.orientador = orientador;
         this.integrantes = integrantes;
+        this.temas = temas;
     }
 
     public Tcc(TccRequestDTO data) {
@@ -46,6 +50,7 @@ public class Tcc {
         this.isActive = data.isActive();
         this.orientador = data.orientador();
         this.integrantes = data.integrantes();
+        this.temas = data.temas(); // Inicializa os temas a partir do DTO
     }
 }
 

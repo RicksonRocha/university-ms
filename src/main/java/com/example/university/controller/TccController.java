@@ -72,6 +72,7 @@ public class TccController {
             tcc.setIsActive(data.isActive());
             tcc.setOrientador(data.orientador());
             tcc.setIntegrantes(data.integrantes());
+            tcc.setTemas(data.temas());
 
             tccRepository.save(tcc);
 
