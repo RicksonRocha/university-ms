@@ -70,9 +70,9 @@ public class TccController {
             tcc.setName(data.name());
             tcc.setDescription(data.description());
             tcc.setIsActive(data.isActive());
-            tcc.setOrientador(data.orientador());
-            tcc.setIntegrantes(data.integrantes());
-            tcc.setTemas(data.temas());
+            tcc.setTeacherTcc(data.teacherTcc());
+            tcc.setMembers(data.members());
+            tcc.setThemes(data.themes());
 
             tccRepository.save(tcc);
 
