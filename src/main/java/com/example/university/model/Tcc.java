@@ -1,10 +1,9 @@
 package com.example.university.model;
 
-import java.util.Date;
+import java.util.List;
 
 import com.example.university.dto.TccRequestDTO;
-import com.example.university.dto.TeacherRequestDTO;
-
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,17 +27,30 @@ public class Tcc {
     private String name;
     private String description;
     private Boolean isActive;
+    private String orientador; // Novo campo para o orientador
 
-    public Tcc(String name,
-            String description,
-            Boolean isActive) {
+    @ElementCollection
+    private List<String> integrantes; // Lista de integrantes da equipe, vai ser uma tabela auxiliar no banco
+
+    @ElementCollection
+    private List<String> temas; // Lista de temas para o TCC, armazenada como uma tabela auxiliar
+
+    public Tcc(String name, String description, Boolean isActive, String orientador, List<String> integrantes, List<String> temas) {
         this.name = name;
         this.description = description;
         this.isActive = isActive;
+        this.orientador = orientador;
+        this.integrantes = integrantes;
+        this.temas = temas;
     }
 
     public Tcc(TccRequestDTO data) {
         this.name = data.name();
         this.description = data.description();
+        this.isActive = data.isActive();
+        this.orientador = data.orientador();
+        this.integrantes = data.integrantes();
+        this.temas = data.temas(); // Inicializa os temas a partir do DTO
     }
 }
+
