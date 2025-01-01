@@ -8,8 +8,9 @@ public record TccResponseDTO(
     String name, 
     String description, 
     Boolean isActive, 
-    String teacherTcc, // Campo para o Tacher
-    List<String> members // Lista de integrantes da equipe
+    String teacherTcc, 
+    List<String> members,
+    List<String> themes
 ) {
     public TccResponseDTO(Tcc tcc) {
         this(
@@ -18,7 +19,8 @@ public record TccResponseDTO(
             tcc.getDescription(), 
             tcc.getIsActive(), 
             tcc.getTeacherTcc(), 
-            tcc.getMembers()
+            tcc.getMembers(),
+            tcc.getThemes()
         );
     }
 }
