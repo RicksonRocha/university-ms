@@ -36,10 +36,10 @@ public class StudentController {
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping
     public ResponseEntity<List<StudentResponseDTO>> getAll() {
-        List<StudentResponseDTO> teacherList = studentRepository.findAll().stream()
+        List<StudentResponseDTO> studentList = studentRepository.findAll().stream()
                 .map(StudentResponseDTO::new)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(teacherList);
+        return ResponseEntity.ok(studentList);
     }
 
     @GetMapping("/{id}")
