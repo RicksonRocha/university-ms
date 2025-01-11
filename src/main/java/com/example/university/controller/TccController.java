@@ -62,6 +62,19 @@ public class TccController {
     }
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @GetMapping("/student")
+    public ResponseEntity<TccResponseDTO> getTeamByStudent() {
+        String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<Tcc> team = tccRepository.findByCreatedBy(userEmail);
+    
+        if (team.isPresent()) {
+            return ResponseEntity.ok(new TccResponseDTO(team.get()));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }    
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PutMapping("/{id}")
     public ResponseEntity<TccResponseDTO> updateTcc(@PathVariable Long id,
             @RequestBody TccRequestDTO data) {
@@ -98,4 +111,3 @@ public class TccController {
         }
     }
 }
-
