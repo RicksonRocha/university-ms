@@ -31,7 +31,7 @@ public class Tcc {
     private String name;
     private String description;
     private Boolean isActive;
-    private String teacherTcc; // Novo campo para o orientador
+    private String teacherTcc;
 
     @ElementCollection
     @CollectionTable(name = "tcc_members", joinColumns = @JoinColumn(name = "tcc_id"))
@@ -43,22 +43,27 @@ public class Tcc {
     @Column(name = "theme")
     private List<String> themes;
 
+    private String createdBy; // Novo campo para armazenar o email do criador
+
     public Tcc(String name, String description, Boolean isActive, String teacherTcc, List<String> members,
-            List<String> themes) {
+            List<String> themes, String createdBy) {
         this.name = name;
         this.description = description;
         this.isActive = isActive;
         this.teacherTcc = teacherTcc;
         this.members = members;
         this.themes = themes;
+        this.createdBy = createdBy;
     }
 
-    public Tcc(TccRequestDTO data) {
+    public Tcc(TccRequestDTO data, String createdBy) {
         this.name = data.name();
         this.description = data.description();
         this.isActive = data.isActive();
         this.teacherTcc = data.teacherTcc();
         this.members = data.members();
-        this.themes = data.themes(); // Inicializa os temas a partir do DTO
+        this.themes = data.themes();
+        this.createdBy = createdBy;
     }
 }
+

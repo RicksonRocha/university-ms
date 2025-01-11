@@ -5,13 +5,17 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 
 import java.io.IOException;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private final String secret = "my-secret-key-login-tcc"; 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -20,24 +24,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String token = resolveToken(request);
 
-        if (token == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Authorization token is missing or invalid.");
-            return;
-        }
+        if (token != null) {
+            try {
+                System.out.println("Token recebido para validação: " + token);
 
-        // Adiciona a autenticação ao contexto do Spring Security
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(null, null, null);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+                // Valida o token e extrai o email
+                String email = JWT.require(Algorithm.HMAC256(secret))
+                        .build()
+                        .verify(token)
+                        .getSubject();
+                System.out.println("Email extraído do token: " + email);
+
+                // Preenche o contexto de autenticação
+                SecurityContextHolder.getContext().setAuthentication(
+                        new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(email, null, null)
+                );
+                System.out.println("Contexto de autenticação preenchido com sucesso.");
+            } catch (Exception e) {
+                System.out.println("Erro ao validar o token: " + e.getMessage());
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Invalid token");
+                return;
+            }
+        } else {
+            System.out.println("Nenhum token encontrado no cabeçalho Authorization.");
+        }
 
         filterChain.doFilter(request, response);
     }
 
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
+        System.out.println("Token recebido: " + bearerToken); // Para verificação
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;
     }
 }
+

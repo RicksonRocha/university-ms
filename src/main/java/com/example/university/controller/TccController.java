@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,7 +54,8 @@ public class TccController {
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping
     public ResponseEntity<TccResponseDTO> saveTcc(@RequestBody TccRequestDTO data) {
-        Tcc tccData = new Tcc(data);
+        String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Tcc tccData = new Tcc(data, userEmail);
         tccData = tccRepository.save(tccData);
         TccResponseDTO responseDTO = new TccResponseDTO(tccData);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
@@ -87,7 +89,7 @@ public class TccController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTcc(@PathVariable Long id) {
         Optional<Tcc> tccOptional = tccRepository.findById(id);
-    
+
         if (tccOptional.isPresent()) {
             tccRepository.delete(tccOptional.get());
             return ResponseEntity.noContent().build();
@@ -96,3 +98,4 @@ public class TccController {
         }
     }
 }
+
