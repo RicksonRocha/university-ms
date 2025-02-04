@@ -8,6 +8,8 @@ public record TccRequestDTO(
     Boolean isActive, 
     String teacherTcc, // Campo para o orientador
     List<String> members, // Lista de integrantes da equipe
-    List<String> themes // Lista de temas do TCC
+    List<String> themes, // Lista de temas do TCC
+    Long createdById,
+    String createdByEmail
 ) {}
 

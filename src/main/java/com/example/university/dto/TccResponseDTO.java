@@ -10,7 +10,9 @@ public record TccResponseDTO(
     Boolean isActive, 
     String teacherTcc, 
     List<String> members,
-    List<String> themes
+    List<String> themes,
+    Long createdById,
+    String createdByEmail
 ) {
     public TccResponseDTO(Tcc tcc) {
         this(
@@ -20,7 +22,9 @@ public record TccResponseDTO(
             tcc.getIsActive(), 
             tcc.getTeacherTcc(), 
             tcc.getMembers(),
-            tcc.getThemes()
+            tcc.getThemes(),
+            tcc.getCreatedById(),
+            tcc.getCreatedByEmail()
         );
     }
 }

@@ -8,6 +8,6 @@ import com.example.university.model.Tcc;
 
 public interface TccRepository extends JpaRepository<Tcc, Long> {
 
-    Optional<Tcc> findByCreatedBy(String userEmail);
+    // Optional<Tcc> findByCreatedBy(String userEmail);
 
 }
