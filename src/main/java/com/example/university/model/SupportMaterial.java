@@ -1,7 +1,6 @@
 package com.example.university.model;
 
-import java.io.File;
-
+import java.time.LocalDate;
 import com.example.university.dto.SupportMaterialRequestDTO;
 
 import jakarta.persistence.Entity;
@@ -25,23 +24,24 @@ public class SupportMaterial {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private String autor;
     private String link;
-    private File document;
-    private String type;
+    private LocalDate date;
+    private Long teamId;
 
-    public SupportMaterial(String name,
-            String link,
-            File document, String type) {
+    public SupportMaterial(String name, String autor, String link, Long teamId) {
         this.name = name;
+        this.autor = autor;
         this.link = link;
-        this.document = document;
-        this.type = type;
+        this.date = LocalDate.now();
+        this.teamId = teamId != null ? teamId : 1L;
     }
 
     public SupportMaterial(SupportMaterialRequestDTO data) {
         this.name = data.name();
+        this.autor = data.autor();
         this.link = data.link();
-        this.document = data.document();
-        this.type = data.type();
+        this.date = LocalDate.now();
+        this.teamId = data.teamId() != null ? data.teamId() : 1L;
     }
 }

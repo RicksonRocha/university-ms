@@ -7,10 +7,10 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -54,11 +54,25 @@ public class TccController {
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping
     public ResponseEntity<TccResponseDTO> saveTcc(@RequestBody TccRequestDTO data) {
-        Tcc tccData = new Tcc(data);
+        String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Tcc tccData = new Tcc(data, userEmail);
         tccData = tccRepository.save(tccData);
         TccResponseDTO responseDTO = new TccResponseDTO(tccData);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @GetMapping("/student")
+    public ResponseEntity<TccResponseDTO> getTeamByStudent() {
+        String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<Tcc> team = tccRepository.findByCreatedBy(userEmail);
+    
+        if (team.isPresent()) {
+            return ResponseEntity.ok(new TccResponseDTO(team.get()));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }    
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PutMapping("/{id}")
@@ -68,10 +82,12 @@ public class TccController {
 
         if (existingTcc.isPresent()) {
             Tcc tcc = existingTcc.get();
-
             tcc.setName(data.name());
             tcc.setDescription(data.description());
             tcc.setIsActive(data.isActive());
+            tcc.setTeacherTcc(data.teacherTcc());
+            tcc.setMembers(data.members());
+            tcc.setThemes(data.themes());
 
             tccRepository.save(tcc);
 
@@ -84,14 +100,12 @@ public class TccController {
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @DeleteMapping("/{id}")
-    public ResponseEntity<TccResponseDTO> deleteTcc(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTcc(@PathVariable Long id) {
         Optional<Tcc> tccOptional = tccRepository.findById(id);
 
         if (tccOptional.isPresent()) {
-            Tcc tcc = tccOptional.get();
-            tccRepository.delete(tcc);
-            TccResponseDTO responseDTO = new TccResponseDTO(tcc);
-            return ResponseEntity.ok(responseDTO);
+            tccRepository.delete(tccOptional.get());
+            return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();
         }
