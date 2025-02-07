@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -12,6 +13,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
 import java.io.IOException;
+import java.util.Collections;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -36,9 +38,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 System.out.println("Email extraído do token: " + email);
 
                 // Preenche o contexto de autenticação
+                // SecurityContextHolder.getContext().setAuthentication(
+                //         new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(email, null, null)
+                // );
+
                 SecurityContextHolder.getContext().setAuthentication(
-                        new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(email, null, null)
+                    new UsernamePasswordAuthenticationToken(email, null, Collections.emptyList()) 
+                    // Adicionado uma lista vazia porque permite que o Spring Security reconheça a autenticação, mesmo sem permissões explícitas.
                 );
+
                 System.out.println("Contexto de autenticação preenchido com sucesso.");
             } catch (Exception e) {
                 System.out.println("Erro ao validar o token: " + e.getMessage());
