@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,30 +53,21 @@ public class TccController {
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping
     public ResponseEntity<TccResponseDTO> saveTcc(@RequestBody TccRequestDTO data) {
-        String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Tcc tccData = new Tcc(data, userEmail);
-        tccData = tccRepository.save(tccData);
-        TccResponseDTO responseDTO = new TccResponseDTO(tccData);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
-    }
 
-    @CrossOrigin(origins = "*", allowedHeaders = "*")
-    @GetMapping("/student")
-    public ResponseEntity<TccResponseDTO> getTeamByStudent() {
-        String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<Tcc> team = tccRepository.findByCreatedBy(userEmail);
-    
-        if (team.isPresent()) {
-            return ResponseEntity.ok(new TccResponseDTO(team.get()));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }    
+        // Aqui, se espera que o payload já tenha createdById e createdByEmail,
+        // extraídos pelo front a partir do serviço de login
+
+        Tcc tccData = new Tcc(data, data.createdById(), data.createdByEmail());
+        tccData = tccRepository.save(tccData);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new TccResponseDTO(tccData));
+    }
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PutMapping("/{id}")
     public ResponseEntity<TccResponseDTO> updateTcc(@PathVariable Long id,
             @RequestBody TccRequestDTO data) {
+
         Optional<Tcc> existingTcc = tccRepository.findById(id);
 
         if (existingTcc.isPresent()) {
@@ -88,13 +78,14 @@ public class TccController {
             tcc.setTeacherTcc(data.teacherTcc());
             tcc.setMembers(data.members());
             tcc.setThemes(data.themes());
+            tcc.setCreatedById(data.createdById());
+            tcc.setCreatedByEmail(data.createdByEmail());
 
             tccRepository.save(tcc);
+            return ResponseEntity.ok(new TccResponseDTO(tcc));
 
-            TccResponseDTO responseDTO = new TccResponseDTO(tcc);
-            return ResponseEntity.ok(responseDTO);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
