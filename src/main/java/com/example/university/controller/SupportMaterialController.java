@@ -25,7 +25,7 @@ public class SupportMaterialController {
     // Obtém todos os materiais cadastrados
     @GetMapping
     public ResponseEntity<List<SupportMaterialResponseDTO>> getAllMaterials() {
-        // Obtém o usuário autenticado do contexto do Spring Security
+        // Obtém o usuário autenticado 
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         System.out.println("Usuário autenticado no Spring Security: " + userEmail);
     
