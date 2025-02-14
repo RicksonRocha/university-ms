@@ -3,8 +3,6 @@ package com.example.university.model;
 import java.util.Date;
 
 import com.example.university.dto.CalendarRequestDTO;
-import com.example.university.dto.StudentRequestDTO;
-import com.example.university.dto.TeacherRequestDTO;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
