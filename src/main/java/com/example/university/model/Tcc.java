@@ -2,7 +2,7 @@ package com.example.university.model;
 
 import java.util.List;
 
-import com.example.university.dto.tcc.TccRequestDTO;
+import com.example.university.dto.TccRequestDTO;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -43,26 +43,30 @@ public class Tcc {
     @Column(name = "theme")
     private List<String> themes;
 
-    private String createdBy; // Novo campo para armazenar o email do criador
+    // NOVOS CAMPOS para identificar o criador da equipe
+    private Long createdById;
+    private String createdByEmail;
 
     public Tcc(String name, String description, Boolean isActive, String teacherTcc, List<String> members,
-            List<String> themes, String createdBy) {
+            List<String> themes, Long createdById, String createdByEmail) {
         this.name = name;
         this.description = description;
         this.isActive = isActive;
         this.teacherTcc = teacherTcc;
         this.members = members;
         this.themes = themes;
-        this.createdBy = createdBy;
+        this.createdById = createdById;
+        this.createdByEmail = createdByEmail;
     }
 
-    public Tcc(TccRequestDTO data, String createdBy) {
+    public Tcc(TccRequestDTO data, Long createdById, String createdByEmail) {
         this.name = data.name();
         this.description = data.description();
         this.isActive = data.isActive();
         this.teacherTcc = data.teacherTcc();
         this.members = data.members();
         this.themes = data.themes();
-        this.createdBy = createdBy;
+        this.createdById = createdById;
+        this.createdByEmail = createdByEmail;
     }
 }

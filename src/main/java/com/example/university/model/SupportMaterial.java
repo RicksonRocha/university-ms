@@ -3,46 +3,50 @@ package com.example.university.model;
 import java.time.LocalDate;
 
 import com.example.university.dto.supportmaterial.SupportMaterialRequestDTO;
+import jakarta.persistence.*;
+import lombok.*;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Entity(name = "supportmaterial")
+@Entity
 @Table(name = "supportmaterial")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class SupportMaterial {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String autor;
+
+    @Column(nullable = false)
     private String link;
+
+    @Column(nullable = false)
     private LocalDate date;
+
+    @Column(name = "team_id")
     private Long teamId;
 
-    public SupportMaterial(String name, String autor, String link, Long teamId) {
-        this.name = name;
-        this.autor = autor;
-        this.link = link;
-        this.date = LocalDate.now();
-        this.teamId = teamId != null ? teamId : 1L;
-    }
-
-    public SupportMaterial(SupportMaterialRequestDTO data) {
+    // Construtor para receber dados do DTO e definir a data automaticamente
+    public SupportMaterial(SupportMaterialRequestDTO data, String userEmail) {
         this.name = data.name();
-        this.autor = data.autor();
+        this.autor = userEmail; // Define automaticamente o usuário logado como autor
         this.link = data.link();
         this.date = LocalDate.now();
-        this.teamId = data.teamId() != null ? data.teamId() : 1L;
+        // Usa o valor enviado no DTO para teamId
+        this.teamId = data.teamId();
+    }
+
+    // Atualiza os dados sem modificar o autor
+    public void updateFromDTO(SupportMaterialRequestDTO data) {
+        this.name = data.name();
+        this.link = data.link();
+        this.date = LocalDate.now();
     }
 }

@@ -1,21 +1,20 @@
 package com.example.university.dto.supportmaterial;
 
 import com.example.university.model.SupportMaterial;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public record SupportMaterialResponseDTO(
         Long id, String name, String autor, String link, String date, Long teamId) {
 
-    public SupportMaterialResponseDTO(SupportMaterial supportMaterial) {
+    public SupportMaterialResponseDTO(SupportMaterial material) {
         this(
-                supportMaterial.getId(),
-                supportMaterial.getName(),
-                supportMaterial.getAutor(),
-                supportMaterial.getLink(),
-                formatDate(supportMaterial.getDate()),
-                supportMaterial.getTeamId());
+                material.getId(),
+                material.getName(),
+                material.getAutor(), // O autor é o e-mail do usuário logado
+                material.getLink(),
+                formatDate(material.getDate()),
+                material.getTeamId());
     }
 
     private static String formatDate(LocalDate date) {
