@@ -1,4 +1,4 @@
-package com.example.university.dto;
+package com.example.university.dto.supportmaterial;
 
 import com.example.university.model.SupportMaterial;
 
@@ -10,17 +10,17 @@ public record SupportMaterialResponseDTO(
 
     public SupportMaterialResponseDTO(SupportMaterial supportMaterial) {
         this(
-            supportMaterial.getId(),
-            supportMaterial.getName(),
-            supportMaterial.getAutor(),
-            supportMaterial.getLink(),
-            formatDate(supportMaterial.getDate()),
-            supportMaterial.getTeamId()
-        );
+                supportMaterial.getId(),
+                supportMaterial.getName(),
+                supportMaterial.getAutor(),
+                supportMaterial.getLink(),
+                formatDate(supportMaterial.getDate()),
+                supportMaterial.getTeamId());
     }
 
     private static String formatDate(LocalDate date) {
-        if (date == null) return null;
+        if (date == null)
+            return null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         return date.format(formatter);
     }

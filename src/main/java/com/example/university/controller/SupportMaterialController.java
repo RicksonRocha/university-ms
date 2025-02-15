@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.university.dto.SupportMaterialRequestDTO;
-import com.example.university.dto.SupportMaterialResponseDTO;
+import com.example.university.dto.supportmaterial.SupportMaterialRequestDTO;
+import com.example.university.dto.supportmaterial.SupportMaterialResponseDTO;
 import com.example.university.model.SupportMaterial;
 import com.example.university.repository.SupportMaterialRepository;
 
@@ -51,7 +51,8 @@ public class SupportMaterialController {
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping
     public ResponseEntity<SupportMaterialResponseDTO> saveSupportMaterial(@RequestBody SupportMaterialRequestDTO data) {
-        SupportMaterial supportMaterialData = new SupportMaterial(data.name(), data.autor(), data.link(), data.teamId());
+        SupportMaterial supportMaterialData = new SupportMaterial(data.name(), data.autor(), data.link(),
+                data.teamId());
         supportMaterialData = supportMaterialRepository.save(supportMaterialData);
         SupportMaterialResponseDTO responseDTO = new SupportMaterialResponseDTO(supportMaterialData);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);

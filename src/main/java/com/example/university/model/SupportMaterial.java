@@ -1,7 +1,8 @@
 package com.example.university.model;
 
 import java.time.LocalDate;
-import com.example.university.dto.SupportMaterialRequestDTO;
+
+import com.example.university.dto.supportmaterial.SupportMaterialRequestDTO;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

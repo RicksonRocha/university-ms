@@ -2,7 +2,7 @@ package com.example.university.model;
 
 import java.util.List;
 
-import com.example.university.dto.TccRequestDTO;
+import com.example.university.dto.tcc.TccRequestDTO;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -66,4 +66,3 @@ public class Tcc {
         this.createdBy = createdBy;
     }
 }
-
