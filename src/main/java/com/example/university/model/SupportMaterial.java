@@ -1,7 +1,8 @@
 package com.example.university.model;
 
 import java.time.LocalDate;
-import com.example.university.dto.SupportMaterialRequestDTO;
+
+import com.example.university.dto.supportmaterial.SupportMaterialRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,23 +13,23 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SupportMaterial {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(nullable = false)
     private String name;
-    
+
     @Column(nullable = false)
-    private String autor; 
-    
+    private String autor;
+
     @Column(nullable = false)
     private String link;
-    
+
     @Column(nullable = false)
     private LocalDate date;
-    
+
     @Column(name = "team_id")
     private Long teamId;
 

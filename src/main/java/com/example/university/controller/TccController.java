@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.university.dto.TccRequestDTO;
-import com.example.university.dto.TccResponseDTO;
 import com.example.university.model.Tcc;
 import com.example.university.repository.TccRepository;
+import com.example.university.dto.TccResponseDTO;
+import com.example.university.dto.TccRequestDTO;
 
 @RestController
 @RequestMapping("tcc")

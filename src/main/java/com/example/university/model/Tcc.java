@@ -70,4 +70,3 @@ public class Tcc {
         this.createdByEmail = createdByEmail;
     }
 }
-
