@@ -21,6 +21,7 @@ import com.example.university.model.Tcc;
 import com.example.university.repository.TccRepository;
 import com.example.university.dto.TccResponseDTO;
 import com.example.university.dto.TccRequestDTO;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("tcc")
@@ -36,6 +37,21 @@ public class TccController {
                 .map(TccResponseDTO::new)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(tccList);
+    }
+
+    @GetMapping("teacher/{id}")
+    public ResponseEntity<List<TccResponseDTO>> getTccsByidTeacher(@PathVariable Long id) {
+        List<Tcc> tccList = tccRepository.findByTeacherTcc(id);
+
+        if (tccList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<TccResponseDTO> responseDTOs = tccList.stream()
+                .map(TccResponseDTO::new)
+                .toList();
+
+        return ResponseEntity.ok(responseDTOs);
     }
 
     @GetMapping("/{id}")
