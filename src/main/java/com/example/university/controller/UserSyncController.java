@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.university.model.Tcc;
 import com.example.university.repository.TccRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,28 +22,31 @@ public class UserSyncController {
     private TccRepository tccRepository;
 
     @Transactional
-    @DeleteMapping("/remove/{id}")
-    public ResponseEntity<Void> removeUser(@PathVariable Long id) {
+    @DeleteMapping("/remove/{id}/{name}")
+    public ResponseEntity<Void> removeUser(@PathVariable Long id, @PathVariable String name) {
         List<Tcc> tccs = tccRepository.findAll();
 
         for (Tcc tcc : tccs) {
             boolean altered = false;
 
+            // Remover orientador pelo ID
             if (tcc.getTeacherTcc() != null && tcc.getTeacherTcc().equals(id)) {
                 tcc.setTeacherTcc(null);
                 altered = true;
+                System.out.println("Orientador com ID " + id + " removido do TCC " + tcc.getId());
             }
 
+            // Remover membro pelo nome
             if (tcc.getMembers() != null) {
                 List<String> currentMembers = tcc.getMembers();
                 List<String> updatedMembers = currentMembers.stream()
-                        .filter(memberId -> !memberId.equals(String.valueOf(id)))
+                        .filter(memberName -> !memberName.equalsIgnoreCase(name))
                         .collect(Collectors.toList());
 
                 if (updatedMembers.size() != currentMembers.size()) {
                     tcc.setMembers(updatedMembers);
                     altered = true;
-                    System.out.println("Removido membro " + id + " da equipe " + tcc.getId());
+                    System.out.println("Membro '" + name + "' removido do TCC " + tcc.getId());
                 }
             }
 
