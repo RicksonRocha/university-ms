@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.university.dto.SupportMaterialRequestDTO;
-import com.example.university.dto.SupportMaterialResponseDTO;
+import com.example.university.dto.supportmaterial.SupportMaterialRequestDTO;
+import com.example.university.dto.supportmaterial.SupportMaterialResponseDTO;
 import com.example.university.model.SupportMaterial;
 import com.example.university.repository.SupportMaterialRepository;
 
@@ -25,28 +25,28 @@ public class SupportMaterialController {
     // Obtém todos os materiais cadastrados
     @GetMapping
     public ResponseEntity<List<SupportMaterialResponseDTO>> getAllMaterials() {
-        // Obtém o usuário autenticado do contexto do Spring Security
+        // Obtém o usuário autenticado
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         System.out.println("Usuário autenticado no Spring Security: " + userEmail);
-    
+
         List<SupportMaterial> materials = supportMaterialRepository.findAll();
-    
+
         return ResponseEntity.ok(
-            materials.stream()
-                     .map(SupportMaterialResponseDTO::new)
-                     .toList()
-        );
+                materials.stream()
+                        .map(SupportMaterialResponseDTO::new)
+                        .toList());
     }
 
     // Criação de material de apoio
     @PostMapping
+
     public ResponseEntity<SupportMaterialResponseDTO> create(@RequestBody SupportMaterialRequestDTO data) {
         // Obtém o e-mail do usuário logado
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 
         // Cria um novo material com o usuário logado como autor
         SupportMaterial material = new SupportMaterial(data, userEmail);
-        
+
         material = supportMaterialRepository.save(material);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new SupportMaterialResponseDTO(material));
@@ -55,16 +55,15 @@ public class SupportMaterialController {
     // Atualização de material
     @PutMapping("/{id}")
     public ResponseEntity<SupportMaterialResponseDTO> update(
-        @PathVariable Long id, @RequestBody SupportMaterialRequestDTO data) {
-        
+            @PathVariable Long id, @RequestBody SupportMaterialRequestDTO data) {
+
         return supportMaterialRepository.findById(id)
-            .map(material -> {
-                material.updateFromDTO(data);
-                return ResponseEntity.ok(
-                    new SupportMaterialResponseDTO(supportMaterialRepository.save(material))
-                );
-            })
-            .orElse(ResponseEntity.notFound().build());
+                .map(material -> {
+                    material.updateFromDTO(data);
+                    return ResponseEntity.ok(
+                            new SupportMaterialResponseDTO(supportMaterialRepository.save(material)));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // Exclusão de material

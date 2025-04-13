@@ -16,11 +16,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.ArrayList;
 
-import com.example.university.dto.TccRequestDTO;
-import com.example.university.dto.TccResponseDTO;
 import com.example.university.model.Tcc;
 import com.example.university.repository.TccRepository;
+import com.example.university.dto.TccResponseDTO;
+import com.example.university.dto.AddMemberDTO;
+import com.example.university.dto.TccRequestDTO;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("tcc")
@@ -36,6 +39,21 @@ public class TccController {
                 .map(TccResponseDTO::new)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(tccList);
+    }
+
+    @GetMapping("teacher/{id}")
+    public ResponseEntity<List<TccResponseDTO>> getTccsByidTeacher(@PathVariable Long id) {
+        List<Tcc> tccList = tccRepository.findByTeacherTcc(id);
+
+        if (tccList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<TccResponseDTO> responseDTOs = tccList.stream()
+                .map(TccResponseDTO::new)
+                .toList();
+
+        return ResponseEntity.ok(responseDTOs);
     }
 
     @GetMapping("/{id}")
@@ -100,5 +118,25 @@ public class TccController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @PutMapping("/{id}/addMember")
+    public ResponseEntity<TccResponseDTO> addMember(@PathVariable Long id, @RequestBody AddMemberDTO addMemberDTO) {
+        Optional<Tcc> optionalTcc = tccRepository.findById(id);
+        if (optionalTcc.isPresent()) {
+            Tcc tcc = optionalTcc.get();
+            // Inicializa a lista de membros se estiver nula
+            if (tcc.getMembers() == null) {
+                tcc.setMembers(new ArrayList<>());
+            }
+            // Adiciona o novo membro se ainda não estiver na lista
+            if (!tcc.getMembers().contains(addMemberDTO.member())) {
+                tcc.getMembers().add(addMemberDTO.member());
+            }
+            tccRepository.save(tcc);
+            return ResponseEntity.ok(new TccResponseDTO(tcc));
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

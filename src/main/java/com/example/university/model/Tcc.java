@@ -31,7 +31,7 @@ public class Tcc {
     private String name;
     private String description;
     private Boolean isActive;
-    private String teacherTcc;
+    private Long teacherTcc;
 
     @ElementCollection
     @CollectionTable(name = "tcc_members", joinColumns = @JoinColumn(name = "tcc_id"))
@@ -47,7 +47,7 @@ public class Tcc {
     private Long createdById;
     private String createdByEmail;
 
-    public Tcc(String name, String description, Boolean isActive, String teacherTcc, List<String> members,
+    public Tcc(String name, String description, Boolean isActive, Long teacherTcc, List<String> members,
             List<String> themes, Long createdById, String createdByEmail) {
         this.name = name;
         this.description = description;
@@ -70,4 +70,3 @@ public class Tcc {
         this.createdByEmail = createdByEmail;
     }
 }
-

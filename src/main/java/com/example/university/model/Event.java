@@ -2,9 +2,7 @@ package com.example.university.model;
 
 import java.util.Date;
 
-import com.example.university.dto.CalendarRequestDTO;
-import com.example.university.dto.StudentRequestDTO;
-import com.example.university.dto.TeacherRequestDTO;
+import com.example.university.dto.event.EventRequestDTO;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,26 +14,35 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name = "calendar")
-@Table(name = "calendar")
+@Entity(name = "event")
+@Table(name = "event")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Calendar {
+public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private String description;
+    private Date startDate;
+    private Date endDate;
     private Boolean isActive;
 
-    public Calendar(String name, Boolean isActive) {
+    public Event(String name, String description, Date startDate, Date endDate, Boolean isActive) {
         this.name = name;
+        this.description = description;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.isActive = isActive;
     }
 
-    public Calendar(CalendarRequestDTO data) {
+    public Event(EventRequestDTO data) {
         this.name = data.name();
+        this.description = data.description();
+        this.startDate = data.startDate();
+        this.endDate = data.endDate();
         this.isActive = data.isActive();
     }
 }
