@@ -3,10 +3,12 @@ package com.example.university.controller;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.ArrayList;
 
 import com.example.university.model.Tcc;
@@ -23,7 +26,6 @@ import com.example.university.repository.TccRepository;
 import com.example.university.dto.TccResponseDTO;
 import com.example.university.dto.AddMemberDTO;
 import com.example.university.dto.TccRequestDTO;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("tcc")
@@ -71,13 +73,8 @@ public class TccController {
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping
     public ResponseEntity<TccResponseDTO> saveTcc(@RequestBody TccRequestDTO data) {
-
-        // Aqui, se espera que o payload já tenha createdById e createdByEmail,
-        // extraídos pelo front a partir do serviço de login
-
         Tcc tccData = new Tcc(data, data.createdById(), data.createdByEmail());
         tccData = tccRepository.save(tccData);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(new TccResponseDTO(tccData));
     }
 
@@ -101,7 +98,6 @@ public class TccController {
 
             tccRepository.save(tcc);
             return ResponseEntity.ok(new TccResponseDTO(tcc));
-
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -126,11 +122,9 @@ public class TccController {
         Optional<Tcc> optionalTcc = tccRepository.findById(id);
         if (optionalTcc.isPresent()) {
             Tcc tcc = optionalTcc.get();
-            // Inicializa a lista de membros se estiver nula
             if (tcc.getMembers() == null) {
                 tcc.setMembers(new ArrayList<>());
             }
-            // Adiciona o novo membro se ainda não estiver na lista
             if (!tcc.getMembers().contains(addMemberDTO.member())) {
                 tcc.getMembers().add(addMemberDTO.member());
             }
@@ -138,5 +132,23 @@ public class TccController {
             return ResponseEntity.ok(new TccResponseDTO(tcc));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @Transactional
+    @PutMapping("/remove-member/{userId}")
+    public ResponseEntity<Void> removeMemberFromAllTeams(@PathVariable Long userId) {
+        List<Tcc> tccs = tccRepository.findAll();
+        String userIdStr = String.valueOf(userId);
+        boolean updated = false;
+
+        for (Tcc tcc : tccs) {
+            if (tcc.getMembers() != null && tcc.getMembers().removeIf(member -> member.equals(userIdStr))) {
+                tccRepository.saveAndFlush(tcc);
+                updated = true;
+            }
+        }
+
+        return updated ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
     }
 }
