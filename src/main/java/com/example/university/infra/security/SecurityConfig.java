@@ -21,17 +21,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.GET, "/api/university/support-material/**").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/university/support-material").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/university/support-material/**").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/api/university/support-material/**").authenticated()
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/api/university/support-material/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/university/support-material").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/university/support-material/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/university/support-material/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/tcc/teacher/**").authenticated()
+                        .anyRequest().authenticated())
+                .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
