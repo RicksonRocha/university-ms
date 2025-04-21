@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import com.example.university.model.Tcc;
 import com.example.university.repository.TccRepository;
 
@@ -27,7 +30,6 @@ import jakarta.transaction.Transactional;
 import com.example.university.dto.TccResponseDTO;
 import com.example.university.dto.AddMemberDTO;
 import com.example.university.dto.TccRequestDTO;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("tcc")
@@ -87,13 +89,8 @@ public class TccController {
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping
     public ResponseEntity<TccResponseDTO> saveTcc(@RequestBody TccRequestDTO data) {
-
-        // Aqui, se espera que o payload já tenha createdById e createdByEmail,
-        // extraídos pelo front a partir do serviço de login
-
         Tcc tccData = new Tcc(data, data.createdById(), data.createdByEmail());
         tccData = tccRepository.save(tccData);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(new TccResponseDTO(tccData));
     }
 
@@ -117,7 +114,6 @@ public class TccController {
 
             tccRepository.save(tcc);
             return ResponseEntity.ok(new TccResponseDTO(tcc));
-
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -135,7 +131,7 @@ public class TccController {
             return ResponseEntity.notFound().build();
         }
     }
-
+  
     @GetMapping("/status/{userId}")
     public ResponseEntity<Map<String, String>> checkUserStatus(@PathVariable Long userId) {
         Map<String, String> response = new HashMap<>();
@@ -150,6 +146,7 @@ public class TccController {
             if (tcc.getMembers() != null && tcc.getMembers().stream().anyMatch(m -> m.getUserId().equals(userId))) {
                 response.put("status", "member");
                 return ResponseEntity.ok(response);
+
             }
         }
 
@@ -175,24 +172,4 @@ public class TccController {
         return updated ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
     }
 
-    // @CrossOrigin(origins = "*", allowedHeaders = "*")
-    // @PutMapping("/{id}/addMember")
-    // public ResponseEntity<TccResponseDTO> addMember(@PathVariable Long id,
-    // @RequestBody AddMemberDTO addMemberDTO) {
-    // Optional<Tcc> optionalTcc = tccRepository.findById(id);
-    // if (optionalTcc.isPresent()) {
-    // Tcc tcc = optionalTcc.get();
-    // // Inicializa a lista de membros se estiver nula
-    // if (tcc.getMembers() == null) {
-    // tcc.setMembers(new ArrayList<>());
-    // }
-    // // Adiciona o novo membro se ainda não estiver na lista
-    // if (!tcc.getMembers().contains(addMemberDTO.member())) {
-    // tcc.getMembers().add(addMemberDTO.member());
-    // }
-    // tccRepository.save(tcc);
-    // return ResponseEntity.ok(new TccResponseDTO(tcc));
-    // }
-    // return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    // }
 }
