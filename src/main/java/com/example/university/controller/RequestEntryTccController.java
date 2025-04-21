@@ -3,6 +3,7 @@ package com.example.university.controller;
 import com.example.university.dto.RequestEntryTccRequestDTO;
 import com.example.university.dto.RequestEntryTccResponseDTO;
 import com.example.university.model.RequestEntryTcc;
+import com.example.university.model.MemberInfo;
 import com.example.university.model.Notification;
 import com.example.university.model.Tcc;
 import com.example.university.repository.RequestEntryTccRepository;
@@ -79,11 +80,18 @@ public class RequestEntryTccController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
     Tcc tcc = optionalTcc.get();
-    if (!tcc.getMembers().contains(String.valueOf(request.getRequesterName()))) {
-      tcc.getMembers().add(String.valueOf(request.getRequesterName()));
-    }
-    tccRepository.save(tcc);
 
+    // Verifica se o usuário já está na lista
+    boolean alreadyMember = tcc.getMembers().stream()
+        .anyMatch(m -> m.getUserId().equals(request.getRequesterId()));
+
+    if (!alreadyMember) {
+      MemberInfo newMember = new MemberInfo(request.getRequesterId(), request.getRequesterName());
+      tcc.getMembers().add(newMember);
+      tccRepository.save(tcc);
+    }
+
+    // Envia notificação
     Notification notification = new Notification();
     notification.setSenderId(request.getOwnerId());
     notification.setNomeRemetente(request.getOwnerEmail());
@@ -94,6 +102,7 @@ public class RequestEntryTccController {
     notification.setCreatedAt(LocalDateTime.now());
     notificationRepository.save(notification);
 
+    // Remove a solicitação de entrada
     requestEntryTccRepository.deleteById(id);
     return ResponseEntity.ok().build();
   }

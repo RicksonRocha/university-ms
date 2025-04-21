@@ -1,6 +1,8 @@
 package com.example.university.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.Set;
@@ -19,10 +21,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 
 import com.example.university.model.Tcc;
 import com.example.university.repository.TccRepository;
+
+import jakarta.transaction.Transactional;
+
 import com.example.university.dto.TccResponseDTO;
 import com.example.university.dto.AddMemberDTO;
 import com.example.university.dto.TccRequestDTO;
@@ -43,7 +47,8 @@ public class TccController {
         return ResponseEntity.ok(tccList);
     }
 
-    @GetMapping("teacher/{id}")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @GetMapping("/teacher/{id}")
     public ResponseEntity<List<TccResponseDTO>> getTccsByidTeacher(@PathVariable Long id) {
         List<Tcc> tccList = tccRepository.findByTeacherTcc(id);
 
@@ -67,6 +72,17 @@ public class TccController {
             return ResponseEntity.ok(responseDTO);
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("createby/{id}")
+    public ResponseEntity<TccResponseDTO> getTccByCreateById(@PathVariable Long id) {
+        Optional<Tcc> tcc = tccRepository.findByCreatedById(id);
+
+        if (tcc.isPresent()) {
+            return ResponseEntity.ok(new TccResponseDTO(tcc.get()));
+        } else {
+            return ResponseEntity.noContent().build();
         }
     }
 
@@ -115,23 +131,27 @@ public class TccController {
             return ResponseEntity.notFound().build();
         }
     }
+  
+    @GetMapping("/status/{userId}")
+    public ResponseEntity<Map<String, String>> checkUserStatus(@PathVariable Long userId) {
+        Map<String, String> response = new HashMap<>();
 
-    @CrossOrigin(origins = "*", allowedHeaders = "*")
-    @PutMapping("/{id}/addMember")
-    public ResponseEntity<TccResponseDTO> addMember(@PathVariable Long id, @RequestBody AddMemberDTO addMemberDTO) {
-        Optional<Tcc> optionalTcc = tccRepository.findById(id);
-        if (optionalTcc.isPresent()) {
-            Tcc tcc = optionalTcc.get();
-            if (tcc.getMembers() == null) {
-                tcc.setMembers(new ArrayList<>());
+        List<Tcc> allTccs = tccRepository.findAll();
+
+        for (Tcc tcc : allTccs) {
+            if (tcc.getCreatedById() != null && tcc.getCreatedById().equals(userId)) {
+                response.put("status", "owner");
+                return ResponseEntity.ok(response);
             }
-            if (!tcc.getMembers().contains(addMemberDTO.member())) {
-                tcc.getMembers().add(addMemberDTO.member());
+            if (tcc.getMembers() != null && tcc.getMembers().stream().anyMatch(m -> m.getUserId().equals(userId))) {
+                response.put("status", "member");
+                return ResponseEntity.ok(response);
+
             }
-            tccRepository.save(tcc);
-            return ResponseEntity.ok(new TccResponseDTO(tcc));
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        response.put("status", "free");
+        return ResponseEntity.ok(response);
     }
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -151,4 +171,5 @@ public class TccController {
 
         return updated ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
     }
+
 }

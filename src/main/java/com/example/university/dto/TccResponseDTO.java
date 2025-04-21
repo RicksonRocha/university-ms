@@ -2,6 +2,7 @@ package com.example.university.dto;
 
 import java.util.List;
 import com.example.university.model.Tcc;
+import com.example.university.model.MemberInfo;
 
 public record TccResponseDTO(
         Long id,
@@ -9,7 +10,7 @@ public record TccResponseDTO(
         String description,
         Boolean isActive,
         Long teacherTcc,
-        List<String> members,
+        List<MemberInfo> members,
         List<String> themes,
         Long createdById,
         String createdByEmail) {
