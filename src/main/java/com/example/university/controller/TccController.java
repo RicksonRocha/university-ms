@@ -21,11 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import com.example.university.model.Tcc;
 import com.example.university.repository.TccRepository;
-
-import jakarta.transaction.Transactional;
 
 import com.example.university.dto.TccResponseDTO;
 import com.example.university.dto.AddMemberDTO;
@@ -131,7 +128,7 @@ public class TccController {
             return ResponseEntity.notFound().build();
         }
     }
-  
+
     @GetMapping("/status/{userId}")
     public ResponseEntity<Map<String, String>> checkUserStatus(@PathVariable Long userId) {
         Map<String, String> response = new HashMap<>();
