@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.university.model.Tcc;
 import com.example.university.repository.TccRepository;
+
+import jakarta.transaction.Transactional;
+
 import com.example.university.dto.TccResponseDTO;
 import com.example.university.dto.AddMemberDTO;
 import com.example.university.dto.TccRequestDTO;
@@ -152,6 +155,24 @@ public class TccController {
 
         response.put("status", "free");
         return ResponseEntity.ok(response);
+    }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @Transactional
+    @PutMapping("/remove-member/{userId}")
+    public ResponseEntity<Void> removeMemberFromAllTeams(@PathVariable Long userId) {
+        List<Tcc> tccs = tccRepository.findAll();
+        String userIdStr = String.valueOf(userId);
+        boolean updated = false;
+
+        for (Tcc tcc : tccs) {
+            if (tcc.getMembers() != null && tcc.getMembers().removeIf(member -> member.equals(userIdStr))) {
+                tccRepository.saveAndFlush(tcc);
+                updated = true;
+            }
+        }
+
+        return updated ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
     }
 
     // @CrossOrigin(origins = "*", allowedHeaders = "*")
