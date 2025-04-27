@@ -29,13 +29,15 @@ public class Event {
     private Date startDate;
     private Date endDate;
     private Boolean isActive;
+    private String team;
 
-    public Event(String name, String description, Date startDate, Date endDate, Boolean isActive) {
+    public Event(String name, String description, Date startDate, Date endDate, Boolean isActive, String team) {
         this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
         this.isActive = isActive;
+        this.team = team;
     }
 
     public Event(EventRequestDTO data) {
@@ -44,5 +46,6 @@ public class Event {
         this.startDate = data.startDate();
         this.endDate = data.endDate();
         this.isActive = data.isActive();
+        this.team = data.team();
     }
 }

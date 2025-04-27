@@ -30,9 +30,9 @@ public class EventController {
     private EventRepository eventRepository;
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    @GetMapping
-    public ResponseEntity<List<EventResponseDTO>> getAll() {
-        List<EventResponseDTO> eventList = eventRepository.findAll().stream()
+    @GetMapping("/{team}")
+    public ResponseEntity<List<EventResponseDTO>> getAll(@PathVariable String team) {
+        List<EventResponseDTO> eventList = eventRepository.findByTeam(team).stream()
                 .map(EventResponseDTO::new)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(eventList);
@@ -73,6 +73,7 @@ public class EventController {
             event.setStartDate(data.startDate());
             event.setEndDate(data.endDate());
             event.setIsActive(data.isActive());
+            event.setTeam(data.team());
 
             eventRepository.save(event);
 
