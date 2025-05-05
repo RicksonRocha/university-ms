@@ -6,4 +6,6 @@ import com.example.university.model.SupportMaterial;
 
 public interface SupportMaterialRepository extends JpaRepository<SupportMaterial, Long> {
     List<SupportMaterial> findByAutor(String autor);
+
+    List<SupportMaterial> findByTeamId(Long teamId);
 }
