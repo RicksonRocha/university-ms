@@ -78,4 +78,19 @@ public class SupportMaterialController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/team/{teamId}")
+    public ResponseEntity<List<SupportMaterialResponseDTO>> getByTeamId(@PathVariable Long teamId) {
+        List<SupportMaterial> materials = supportMaterialRepository.findByTeamId(teamId);
+
+        if (materials.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<SupportMaterialResponseDTO> response = materials.stream()
+                .map(SupportMaterialResponseDTO::new)
+                .toList();
+
+        return ResponseEntity.ok(response);
+    }
 }
