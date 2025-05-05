@@ -156,17 +156,15 @@ public class TccController {
     @PutMapping("/remove-member/{userId}")
     public ResponseEntity<Void> removeMemberFromAllTeams(@PathVariable Long userId) {
         List<Tcc> tccs = tccRepository.findAll();
-        String userIdStr = String.valueOf(userId);
         boolean updated = false;
-
+    
         for (Tcc tcc : tccs) {
-            if (tcc.getMembers() != null && tcc.getMembers().removeIf(member -> member.equals(userIdStr))) {
+            if (tcc.getMembers() != null && tcc.getMembers().removeIf(member -> member.getUserId().equals(userId))) {
                 tccRepository.saveAndFlush(tcc);
                 updated = true;
             }
         }
-
+    
         return updated ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
     }
-
 }
