@@ -129,6 +129,18 @@ public class TccController {
         }
     }
 
+    @GetMapping("/by-member/{userId}")
+    public ResponseEntity<Tcc> getTccByMemberId(@PathVariable Long userId) {
+        List<Tcc> allTccs = tccRepository.findAll();
+
+        return allTccs.stream()
+                .filter(tcc -> tcc.getMembers() != null &&
+                        tcc.getMembers().stream().anyMatch(member -> member.getUserId().equals(userId)))
+                .findFirst()
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/status/{userId}")
     public ResponseEntity<Map<String, String>> checkUserStatus(@PathVariable Long userId) {
         Map<String, String> response = new HashMap<>();
@@ -157,14 +169,14 @@ public class TccController {
     public ResponseEntity<Void> removeMemberFromAllTeams(@PathVariable Long userId) {
         List<Tcc> tccs = tccRepository.findAll();
         boolean updated = false;
-    
+
         for (Tcc tcc : tccs) {
             if (tcc.getMembers() != null && tcc.getMembers().removeIf(member -> member.getUserId().equals(userId))) {
                 tccRepository.saveAndFlush(tcc);
                 updated = true;
             }
         }
-    
+
         return updated ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
     }
 }
