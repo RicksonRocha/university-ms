@@ -133,6 +133,14 @@ public class TccController {
     public ResponseEntity<Tcc> getTccByMemberId(@PathVariable Long userId) {
         List<Tcc> allTccs = tccRepository.findAll();
 
+        Optional<Tcc> asProfessor = allTccs.stream()
+                .filter(tcc -> tcc.getTeacherTcc() != null && tcc.getTeacherTcc().equals(userId))
+                .findFirst();
+
+        if (asProfessor.isPresent()) {
+            return ResponseEntity.ok(asProfessor.get());
+        }
+
         return allTccs.stream()
                 .filter(tcc -> tcc.getMembers() != null &&
                         tcc.getMembers().stream().anyMatch(member -> member.getUserId().equals(userId)))
@@ -179,4 +187,13 @@ public class TccController {
 
         return updated ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<Map<String, Long>> tccCount() {
+        long count = tccRepository.count();
+        Map<String, Long> response = new HashMap<>();
+        response.put("count", count);
+        return ResponseEntity.ok(response);
+    }
+
 }

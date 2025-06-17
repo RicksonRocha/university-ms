@@ -107,6 +107,37 @@ public class RequestEntryTccController {
     return ResponseEntity.ok().build();
   }
 
+  @PostMapping("/{id}/accept/teacher")
+  public ResponseEntity<Void> acceptRequestTeacher(@PathVariable Long id) {
+    Optional<RequestEntryTcc> optionalRequest = requestEntryTccRepository.findById(id);
+    if (optionalRequest.isEmpty())
+      return ResponseEntity.notFound().build();
+
+    RequestEntryTcc request = optionalRequest.get();
+
+    Optional<Tcc> optionalTcc = tccRepository.findById(request.getTccid());
+    if (optionalTcc.isEmpty())
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+    Tcc tcc = optionalTcc.get();
+    Long teacherId = request.getOwnerId();
+    tcc.setTeacherTcc(teacherId);
+    tccRepository.save(tcc);
+
+    Notification notification = new Notification();
+    notification.setSenderId(request.getOwnerId());
+    notification.setNomeRemetente(request.getOwnerEmail());
+    notification.setReceiverId(request.getRequesterId());
+    notification.setNomeDestinatario(request.getRequesterName());
+    notification.setMessage("Seu pedido de orientação na equipe foi aceito.");
+    notification.setUnRead(true);
+    notification.setCreatedAt(LocalDateTime.now());
+    notificationRepository.save(notification);
+
+    requestEntryTccRepository.deleteById(id);
+    return ResponseEntity.ok().build();
+  }
+
   @PostMapping("/{id}/reject")
   public ResponseEntity<Void> rejectRequest(@PathVariable Long id) {
     Optional<RequestEntryTcc> optionalRequest = requestEntryTccRepository.findById(id);

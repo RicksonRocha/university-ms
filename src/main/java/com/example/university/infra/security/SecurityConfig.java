@@ -30,7 +30,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/university/support-material/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/university/support-material/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/tcc/teacher/**").authenticated()
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
