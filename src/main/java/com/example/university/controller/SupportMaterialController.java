@@ -83,10 +83,6 @@ public class SupportMaterialController {
     public ResponseEntity<List<SupportMaterialResponseDTO>> getByTeamId(@PathVariable Long teamId) {
         List<SupportMaterial> materials = supportMaterialRepository.findByTeamId(teamId);
 
-        if (materials.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
         List<SupportMaterialResponseDTO> response = materials.stream()
                 .map(SupportMaterialResponseDTO::new)
                 .toList();
