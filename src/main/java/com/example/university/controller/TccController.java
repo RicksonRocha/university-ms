@@ -28,13 +28,17 @@ import com.example.university.dto.TccResponseDTO;
 import com.example.university.dto.AddMemberDTO;
 import com.example.university.dto.TccRequestDTO;
 
+// Controlador REST responsável pelo gerenciamento de TCCs
+
 @RestController
 @RequestMapping("tcc")
 public class TccController {
 
+    // Injeta o repositório JPA para acesso ao banco de dados
     @Autowired
     private TccRepository tccRepository;
 
+    // Lista todos os TCCs cadastrados, retornando DTOs para o frontend
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping
     public ResponseEntity<List<TccResponseDTO>> getAll() {
@@ -44,6 +48,7 @@ public class TccController {
         return ResponseEntity.ok(tccList);
     }
 
+    // Lista todos os TCCs orientados por um determinado professor
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/teacher/{id}")
     public ResponseEntity<List<TccResponseDTO>> getTccsByidTeacher(@PathVariable Long id) {
@@ -60,6 +65,7 @@ public class TccController {
         return ResponseEntity.ok(responseDTOs);
     }
 
+    // Busca um TCC pelo seu ID
     @GetMapping("/{id}")
     public ResponseEntity<TccResponseDTO> getTccById(@PathVariable Long id) {
         Optional<Tcc> tcc = tccRepository.findById(id);
@@ -72,6 +78,7 @@ public class TccController {
         }
     }
 
+    // Busca TCC criado por um determinado usuário
     @GetMapping("createby/{id}")
     public ResponseEntity<TccResponseDTO> getTccByCreateById(@PathVariable Long id) {
         Optional<Tcc> tcc = tccRepository.findByCreatedById(id);
@@ -83,6 +90,7 @@ public class TccController {
         }
     }
 
+    // Cria um novo TCC. Recebe dados via DTO e salva no banco de dados
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping
     public ResponseEntity<TccResponseDTO> saveTcc(@RequestBody TccRequestDTO data) {
@@ -91,6 +99,7 @@ public class TccController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new TccResponseDTO(tccData));
     }
 
+    // Atualiza um TCC existente a partir do seu ID. Recebe dados atualizados via DTO
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PutMapping("/{id}")
     public ResponseEntity<TccResponseDTO> updateTcc(@PathVariable Long id,
@@ -116,6 +125,7 @@ public class TccController {
         }
     }
 
+    // Remove um TCC do banco de dados
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTcc(@PathVariable Long id) {
@@ -129,10 +139,12 @@ public class TccController {
         }
     }
 
+    // Busca TCC onde o usuário é membro ou professor/orientador
     @GetMapping("/by-member/{userId}")
     public ResponseEntity<Tcc> getTccByMemberId(@PathVariable Long userId) {
         List<Tcc> allTccs = tccRepository.findAll();
 
+        // Verifica se o usuário é professor de algum TCC
         Optional<Tcc> asProfessor = allTccs.stream()
                 .filter(tcc -> tcc.getTeacherTcc() != null && tcc.getTeacherTcc().equals(userId))
                 .findFirst();
@@ -141,6 +153,7 @@ public class TccController {
             return ResponseEntity.ok(asProfessor.get());
         }
 
+        // Verifica se o usuário é membro de algum TCC
         return allTccs.stream()
                 .filter(tcc -> tcc.getMembers() != null &&
                         tcc.getMembers().stream().anyMatch(member -> member.getUserId().equals(userId)))
@@ -149,6 +162,7 @@ public class TccController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Verifica o status do usuário em relação aos TCCs
     @GetMapping("/status/{userId}")
     public ResponseEntity<Map<String, String>> checkUserStatus(@PathVariable Long userId) {
         Map<String, String> response = new HashMap<>();

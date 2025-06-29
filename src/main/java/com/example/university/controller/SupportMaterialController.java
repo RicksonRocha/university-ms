@@ -14,6 +14,8 @@ import com.example.university.dto.supportmaterial.SupportMaterialResponseDTO;
 import com.example.university.model.SupportMaterial;
 import com.example.university.repository.SupportMaterialRepository;
 
+// Controlador REST responsável por operações de CRUD em materiais de apoio
+
 @RestController
 @RequestMapping("support-material")
 @CrossOrigin(origins = "*")
@@ -25,12 +27,13 @@ public class SupportMaterialController {
     // Obtém todos os materiais cadastrados
     @GetMapping
     public ResponseEntity<List<SupportMaterialResponseDTO>> getAllMaterials() {
-        // Obtém o usuário autenticado
+        // Obtém o e-mail do usuário autenticado pelo contexto de segurança do Spring
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         System.out.println("Usuário autenticado no Spring Security: " + userEmail);
 
         List<SupportMaterial> materials = supportMaterialRepository.findAll();
 
+        // Converte entidades em DTOs para resposta
         return ResponseEntity.ok(
                 materials.stream()
                         .map(SupportMaterialResponseDTO::new)

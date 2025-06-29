@@ -33,10 +33,12 @@ public class Tcc {
     private Boolean isActive;
     private Long teacherTcc;
 
+    // Lista de membros da equipe (cada membro é um MemberInfo, armazenado em tabela separada)
     @ElementCollection
     @CollectionTable(name = "tcc_members", joinColumns = @JoinColumn(name = "tcc_id"))
     private List<MemberInfo> members;
 
+    // Lista de temas/áreas do TCC (armazenada em tabela separada)
     @ElementCollection
     @CollectionTable(name = "tcc_themes", joinColumns = @JoinColumn(name = "tcc_id"))
     @Column(name = "theme")

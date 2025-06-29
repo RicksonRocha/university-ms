@@ -67,7 +67,7 @@ http://localhost:8081
 ## Estrutura do Projeto
 
 - `controller/` – Contém os endpoints REST da aplicação, como `TccController`, `NotificationController` e `SupportMaterialController`
-- `model/` – Contém as entidades JPA, como `Tcc`, `SupportMaterial`, `Notification`, `Timeline`, entre outras
+- `model/` – Contém as entidades JPA, como `Tcc`, `SupportMaterial`, `Notification`, entre outras
 - `dto/` – Estrutura de objetos de transferência de dados (Data Transfer Objects)
 - `infra/` – Configurações adicionais e serviços auxiliares
 - `repository/` – Interfaces JPA para manipulação das entidades

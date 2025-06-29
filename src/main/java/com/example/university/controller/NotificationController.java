@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+// Controlador REST para gerenciamento de notificações
+// Permite criar, listar, contar, marcar como lidas e excluir notificações
+// Utiliza DTOs para trafegar dados entre o frontend e o backend e o NotificationRepository para acessar o banco
+
 @RestController
 @RequestMapping("/notifications")
 @CrossOrigin(origins = "*")

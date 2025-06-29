@@ -15,6 +15,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.List;
 
+// Define as regras de autenticação/autorização para todos os endpoints da aplicação
+
+// Informa ao Spring que essa classe contém beans de configuração
 @Configuration
 public class SecurityConfig {
 
@@ -40,10 +43,11 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("http://localhost:3030")); // Permite chamadas do domínio do front
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); 
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type")); // Headers aceitos
         config.setAllowCredentials(true);
 
+        // Aplica a configuração para todos os endpoints
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;

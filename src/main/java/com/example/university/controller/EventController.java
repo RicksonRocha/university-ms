@@ -26,9 +26,11 @@ import com.example.university.repository.EventRepository;
 @RequestMapping("event")
 public class EventController {
 
+    // Repositório para acessar e manipular eventos no banco
     @Autowired
     private EventRepository eventRepository;
 
+    // Lista todos os eventos de uma equipe específica
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/team/{teamId}")
     public ResponseEntity<List<EventResponseDTO>> getAll(@PathVariable String teamId) {
@@ -38,6 +40,7 @@ public class EventController {
         return ResponseEntity.ok(eventList);
     }
 
+    // Busca um evento pelo seu id
     @GetMapping("/{id}")
     public ResponseEntity<EventResponseDTO> getStudentById(@PathVariable Long id) {
         Optional<Event> event = eventRepository.findById(id);
@@ -50,6 +53,7 @@ public class EventController {
         }
     }
 
+    // Cria e salva um novo evento no banco
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping
     public ResponseEntity<EventResponseDTO> saveEvent(@RequestBody EventRequestDTO data) {
@@ -59,6 +63,7 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
+    // Atualiza um evento existente
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PutMapping("/{id}")
     public ResponseEntity<EventResponseDTO> updateEvent(@PathVariable Long id,
@@ -84,6 +89,7 @@ public class EventController {
         }
     }
 
+    // Deleta um evento
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @DeleteMapping("/{id}")
     public ResponseEntity<EventResponseDTO> deleteEvent(@PathVariable Long id) {

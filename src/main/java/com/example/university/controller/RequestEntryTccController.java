@@ -20,6 +20,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador REST responsável pelo gerenciamento de solicitações de entrada em equipes de TCC.
+ * Permite criar solicitações, listar as solicitações de um orientador, aceitar ou recusar pedidos,
+ * adicionar membros à equipe, designar orientador e notificar os envolvidos.
+ */
+
 @RestController
 @RequestMapping("/request-entry")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -49,6 +55,7 @@ public class RequestEntryTccController {
     return ResponseEntity.status(HttpStatus.CREATED).body(toResponseDTO(saved));
   }
 
+  // Lista todas as solicitações recebidas por um dono de equipe (owner)
   @GetMapping("/owner/{ownerId}")
   public ResponseEntity<List<RequestEntryTccResponseDTO>> getRequestsByOwner(@PathVariable Long ownerId) {
     List<RequestEntryTcc> requests = requestEntryTccRepository.findByOwnerIdOrderByCreatedAtDesc(ownerId);
@@ -67,6 +74,8 @@ public class RequestEntryTccController {
     return ResponseEntity.notFound().build();
   }
 
+  // Aceita uma solicitação de entrada de aluno na equipe
+  // Adiciona o aluno na lista de membros do TCC e envia notificação
   @PostMapping("/{id}/accept")
   public ResponseEntity<Void> acceptRequest(@PathVariable Long id) {
     Optional<RequestEntryTcc> optionalRequest = requestEntryTccRepository.findById(id);
@@ -107,6 +116,8 @@ public class RequestEntryTccController {
     return ResponseEntity.ok().build();
   }
 
+  // Aceite de um pedido para um professor se tornar orientador da equipe
+  // Define o professor como orientador e envia notificação
   @PostMapping("/{id}/accept/teacher")
   public ResponseEntity<Void> acceptRequestTeacher(@PathVariable Long id) {
     Optional<RequestEntryTcc> optionalRequest = requestEntryTccRepository.findById(id);
@@ -138,6 +149,7 @@ public class RequestEntryTccController {
     return ResponseEntity.ok().build();
   }
 
+  // Recusa uma solicitação de entrada e notifica o solicitante
   @PostMapping("/{id}/reject")
   public ResponseEntity<Void> rejectRequest(@PathVariable Long id) {
     Optional<RequestEntryTcc> optionalRequest = requestEntryTccRepository.findById(id);
@@ -160,6 +172,7 @@ public class RequestEntryTccController {
     return ResponseEntity.ok().build();
   }
 
+  // Converte uma entidade para o DTO de resposta
   private RequestEntryTccResponseDTO toResponseDTO(RequestEntryTcc entity) {
     RequestEntryTccResponseDTO dto = new RequestEntryTccResponseDTO();
     dto.setId(entity.getId());

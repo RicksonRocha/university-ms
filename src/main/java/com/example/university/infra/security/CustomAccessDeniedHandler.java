@@ -8,6 +8,8 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 
 import java.io.IOException;
 
+// Quando o usuário autenticado tenta acessar um recurso para o qual não tem permissão, este handler intercepta a exceção e devolve um status 403 (FORBIDDEN) com uma mensagem clara
+
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override

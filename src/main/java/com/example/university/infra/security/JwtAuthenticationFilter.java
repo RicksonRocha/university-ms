@@ -15,6 +15,11 @@ import com.auth0.jwt.algorithms.Algorithm;
 import java.io.IOException;
 import java.util.Collections;
 
+// Intercepta todas as requisições HTTP (uma vez por requisição)
+// Valida o token JWT enviado no header Authorization
+// Se válido, extrai o e-mail do usuário e preenche o contexto de autenticação do Spring Security
+// Se inválido, retorna 401 Unauthorized
+
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final String secret = "my-secret-key-login-tcc"; 
